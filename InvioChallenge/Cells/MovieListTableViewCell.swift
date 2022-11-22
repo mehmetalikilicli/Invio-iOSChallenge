@@ -27,6 +27,7 @@ class MovieListTableViewCell: UITableViewCell {
         movieYearLabel.text = movie.year
         movieTypeLabel.text = movie.type
         movieImdbLabel.text = "IMDB ID : \(movie.id)"
+        print("Buradasın ")
     }
     
     @IBAction func likeButtonTapped(_ sender: Any) {
