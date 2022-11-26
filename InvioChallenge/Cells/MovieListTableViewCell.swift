@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class MovieListTableViewCell: UITableViewCell {
 
@@ -27,7 +28,15 @@ class MovieListTableViewCell: UITableViewCell {
         movieYearLabel.text = movie.year
         movieTypeLabel.text = movie.type
         movieImdbLabel.text = "IMDB ID : \(movie.id)"
-        print("Buradasın ")
+        setMovieImage(movie: movie)
+    }
+    
+    func setMovieImage(movie: Movie) {
+        if let url = URL(string: movie.poster!){
+            DispatchQueue.main.async {
+                self.posterImageView.kf.setImage(with: url)
+            }
+        }
     }
     
     @IBAction func likeButtonTapped(_ sender: Any) {

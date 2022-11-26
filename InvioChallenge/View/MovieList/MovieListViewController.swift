@@ -16,6 +16,7 @@ class MovieListViewController: BaseViewController {
     @IBOutlet weak var tableView: UITableView!
     
     private var viewModel: MovieListViewModel!
+        
     var movies: [Movie] = []
     
     override func viewDidLoad() {
@@ -51,21 +52,52 @@ class MovieListViewController: BaseViewController {
     
     @IBAction func searchButtonTapped(_ sender: Any) {
         
+        if searchField.text == "" {
+            print("Lutfen Arama Bolumune Bir Isım Giriniz!")
+        } else {
+            fetchMovies(searchText: searchField.text!)
+        }
+    }
+    
+    func fetchMovies(searchText : String) {
+        viewModel.getMovies(searchText: searchText) { _ in
+            self.tableView.reloadData()
+        }
+        
     }
 }
 
 
 // MARK: - TableView Delegate & DataSource
 extension MovieListViewController: UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.getNumberOfRowsInSection()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let movie = viewModel.getMovieForCell(at: indexPath) else { return UITableViewCell() }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: MovieListTableViewCell.className, for: indexPath) as! MovieListTableViewCell
         cell.setupCell(movie: movie)
+        //print(movie)
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        viewModel.getMovieOnTapped(at: indexPath) { movie in
+            DispatchQueue.main.async {
+                let movieDetailVC = MovieDetailViewController()
+                //movieDetailVC.configure(with: movie)
+                movieDetailVC.movieDetail = movie
+                let navVC = UINavigationController(rootViewController: movieDetailVC)
+                navVC.modalPresentationStyle = .fullScreen
+                self.present(navVC, animated: true)
+            }
+        }
     }
 }
 
