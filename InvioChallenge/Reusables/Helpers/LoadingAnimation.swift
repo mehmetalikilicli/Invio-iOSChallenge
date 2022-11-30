@@ -8,6 +8,8 @@
 import Foundation
 import UIKit
 
+
+///Loading Animations
 class LoadingAnimation {
     
     static func loadingAnimation() {

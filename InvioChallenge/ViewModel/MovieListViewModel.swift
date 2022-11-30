@@ -34,7 +34,6 @@ protocol MovieListViewModel: BaseViewModel {
     /// - Parameter searchText: searchField arama metni
     func getMoreMovies(searchText : String, completion: @escaping (Search) -> Void)
     
-    func changeFavoriteStatus(imdbID: String)
     
 }
 
@@ -45,12 +44,7 @@ final class MovieListViewModelImpl: MovieListViewModel {
     
     private var nextPage : Int = 2
     private var maxPage : Int = 0
-    
-    
-    func changeFavoriteStatus(imdbID: String) {
-        
-    }
-    
+ 
     
     var stateClosure: ((Result<ViewInteractivity, Error>) -> ())?
     

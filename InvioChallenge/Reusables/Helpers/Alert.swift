@@ -8,12 +8,14 @@
 import Foundation
 import UIKit
 
-class Alert {
 
-    static func alert(title: String, description: String? = nil, from: UIViewController) {
-        let alert = UIAlertController(title: title, message: description, preferredStyle: .alert)
-        let dismissAction = UIAlertAction(title: "Tamam", style: .default, handler: nil)
-        alert.addAction(dismissAction)
+///Alerts
+class Alert {
+    
+    static func makeAlert(title: String, message: String, from: UIViewController) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        let okButton = UIAlertAction(title: "Tamam", style: UIAlertAction.Style.default, handler: nil)
+        alert.addAction(okButton)
         from.present(alert, animated: true, completion: nil)
     }
 

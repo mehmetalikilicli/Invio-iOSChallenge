@@ -27,70 +27,13 @@ class MovieListTableViewCell: UITableViewCell {
         posterImageView.cornerRadius = 12
     }
     
-    func setupCell(movie: Movie) {
-        self.movie = movie
-        movieNameLabel.text = movie.title
-        movieYearLabel.text = movie.year
-        movieTypeLabel.text = movie.type
-        movieImdbLabel.text = "IMDB ID : \(movie.id)"
-        setMovieImage(movie: movie)
-        setFavoriteImage(movie: movie)
-    }
     
-    func setFavoriteImage(movie : Movie) {
-        
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let context = appDelegate.persistentContainer.viewContext
-        
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Favorites")
-        
-        fetchRequest.predicate = NSPredicate(format: "imdbID = %@", movie.id)
-        
-        fetchRequest.returnsObjectsAsFaults = false
-        
-        do {
-            let results = try context.fetch(fetchRequest)
-            
-            for result in results as! [NSManagedObject] {
-                if let favoriteImdbID = result.value(forKey: "imdbID") as? String {
-                    //print(favoriteImdbID)
-                    if favoriteImdbID == movie.id {
-                        DispatchQueue.main.async {
-                            self.likeButton.setImage(UIImage(named: "like-fill"), for: .normal)
-                        }
-                        isFavoriteImageSet = true
-                        do{
-                            try context.save()
-                        } catch {
-                            print("Error")
-                        }
-                        break
-                    }
-                }
-                isFavoriteImageSet = false
-            }
-            if !isFavoriteImageSet {
-                DispatchQueue.main.async {
-                    self.likeButton.setImage(UIImage(named: "like-empty"), for: .normal)
-                }
-            }
-        } catch {
-            print("error")
-        }
-    }
     
-    func setMovieImage(movie: Movie) {
-        if let url = URL(string: movie.poster!), movie.poster != "N/A"{
-            DispatchQueue.main.async {
-                self.posterImageView.kf.setImage(with: url)
-            }
-        } else {
-            DispatchQueue.main.async {
-                self.posterImageView.image = UIImage(named: "placeholder-poster")
-            }
-        }
-    }
     
+}
+
+// likButton tıklandığında favorilere ekler ve çıkarır
+extension MovieListTableViewCell {
     @IBAction func likeButtonTapped(_ sender: Any) {
         
         var isfavoriteChanged : Bool = false
@@ -100,7 +43,7 @@ class MovieListTableViewCell: UITableViewCell {
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Favorites")
         fetchRequest.predicate = NSPredicate(format: "imdbID = %@", movie!.id)
-
+        
         fetchRequest.returnsObjectsAsFaults = false
         
         do {
@@ -138,6 +81,79 @@ class MovieListTableViewCell: UITableViewCell {
                 }
                 DispatchQueue.main.async {
                     self.likeButton.setImage(UIImage(named: "like-fill"), for: .normal)
+                }
+            }
+        } catch {
+            print("error")
+        }
+    }
+}
+
+
+//setupCell
+extension MovieListTableViewCell {
+    func setupCell(movie: Movie) {
+        self.movie = movie
+        movieNameLabel.text = movie.title
+        movieYearLabel.text = movie.year
+        movieTypeLabel.text = movie.type
+        movieImdbLabel.text = "IMDB ID : \(movie.id)"
+        setMovieImage(movie: movie)
+        setFavoriteImage(movie: movie)
+    }
+    
+    func setMovieImage(movie: Movie) {
+        if let url = URL(string: movie.poster!), movie.poster != "N/A"{
+            DispatchQueue.main.async {
+                self.posterImageView.kf.setImage(with: url)
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.posterImageView.image = UIImage(named: "placeholder-poster")
+            }
+        }
+    }
+    
+}
+
+//Sayfa ilk açıldığında filmin favori olup olmadığına göre
+//navbar'da right image doldurur
+extension MovieListTableViewCell{
+    func setFavoriteImage(movie : Movie) {
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Favorites")
+        
+        fetchRequest.predicate = NSPredicate(format: "imdbID = %@", movie.id)
+        
+        fetchRequest.returnsObjectsAsFaults = false
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            
+            for result in results as! [NSManagedObject] {
+                if let favoriteImdbID = result.value(forKey: "imdbID") as? String {
+                    //print(favoriteImdbID)
+                    if favoriteImdbID == movie.id {
+                        DispatchQueue.main.async {
+                            self.likeButton.setImage(UIImage(named: "like-fill"), for: .normal)
+                        }
+                        isFavoriteImageSet = true
+                        do{
+                            try context.save()
+                        } catch {
+                            print("Error")
+                        }
+                        break
+                    }
+                }
+                isFavoriteImageSet = false
+            }
+            if !isFavoriteImageSet {
+                DispatchQueue.main.async {
+                    self.likeButton.setImage(UIImage(named: "like-empty"), for: .normal)
                 }
             }
         } catch {

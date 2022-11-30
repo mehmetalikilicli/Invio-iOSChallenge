@@ -7,6 +7,8 @@
 
 import Foundation
 
+
+///Urls
 struct Urls {
     static let baseUrl = "http://www.omdbapi.com/?"
     static let searchUrl = "s="

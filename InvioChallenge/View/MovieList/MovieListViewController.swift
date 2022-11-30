@@ -53,7 +53,7 @@ class MovieListViewController: BaseViewController {
     @IBAction func searchButtonTapped(_ sender: Any) {
         
         if searchField.text == "" {
-            Alert.alert(title: "", from: <#T##UIViewController#>)
+            Alert.makeAlert(title: "Error", message: "Lutfen bir film ismi girin!", from: self)
         } else {
             fetchMovies(searchText: searchField.text!)
         }
@@ -89,11 +89,11 @@ extension MovieListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        viewModel.getMovieForTappedCell(at: indexPath) { moiveDetail in
+        viewModel.getMovieForTappedCell(at: indexPath) { movieDetail in
             DispatchQueue.main.async {
                 let movieDetailVC = MovieDetailViewController()
                 //movieDetailVC.configure(with: movie)
-                movieDetailVC.movieDetail = moiveDetail
+                movieDetailVC.movieDetail = movieDetail
                 //self.navigationController?.pushViewController(movieDetailVC, animated: true )
                 let navVC = UINavigationController(rootViewController: movieDetailVC)
                 navVC.modalPresentationStyle = .fullScreen
@@ -130,7 +130,7 @@ extension MovieListViewController : UIScrollViewDelegate {
         
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let position = scrollView.contentOffset.y
-        //Tableview alttan 100. piksele geldiğinde çalışır
+        //Tableview alttan 100. pointe geldiğinde çalışır
         if position > (tableView.contentSize.height-100-scrollView.frame.size.height) {
             if searchField.text != nil && isPaging{
                 viewModel.getMoreMovies(searchText: searchField.text!) { _ in

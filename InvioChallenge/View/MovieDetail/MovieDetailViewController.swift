@@ -48,12 +48,20 @@ class MovieDetailViewController: BaseViewController {
     
     
     override func viewDidLoad() {
+        if viewModel == nil {
+            assertionFailure("Lütfen viewModel'ı inject ederek devam et!")
+        }
         super.viewDidLoad()
         configure(with: movieDetail!)
         setUpUI()
         setupNavBar(title: movieDetail?.title, leftIcon: "left-arrow", rightIcon: "like-empty",leftItemAction: #selector(goBack))
     }
     
+    func inject(viewModel: MovieDetailViewModel) {
+        self.viewModel = viewModel
+    }
+    
+    /// navBarRightItemAction
     @objc func changeFavoriteStatus() {
         
         var isfavoriteChanged : Bool = false
