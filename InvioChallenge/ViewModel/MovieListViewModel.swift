@@ -21,41 +21,36 @@ protocol MovieListViewModel: BaseViewModel {
     /// - Returns: Movie datası
     func getMovieForCell(at indexPath: IndexPath) -> Movie?
     
-    func getMovieOnTapped(at indexpath : IndexPath, completion: @escaping (MovieDetail) -> Void)
+    ///ViewController' daki tableView'de tıklanan cell'in movie bilgilerini döner.
+    /// - Parameter indexPath: Tıklanan movie'nin indexi
+    /// - Returns: Movie datası
+    func getMovieForTappedCell(at indexpath : IndexPath, completion: @escaping (MovieDetail) -> Void)
     
-    func getMovies(searchText: String, completion: @escaping ([MovieVM]) -> Void)
+    ///  Aranan kelimeye göre ilk 10 movie listesini döner
+    /// - Parameter searchText: searchField arama metni
+    func getMovies(searchText: String, completion: @escaping (Search) -> Void)
+    
+    /// Lazy Loading için diğer sayfadaki movie listesini döner
+    /// - Parameter searchText: searchField arama metni
+    func getMoreMovies(searchText : String, completion: @escaping (Search) -> Void)
+    
+    func changeFavoriteStatus(imdbID: String)
     
 }
 
 final class MovieListViewModelImpl: MovieListViewModel {
     
-    var moviesList = [MovieVM]()
+    var moviesList = [Movie]()
+    var isPaginating : Bool?
     
-    var movieDetail : MovieDetailVM?
-    
-    func getMovieOnTapped(at indexpath: IndexPath, completion: @escaping (MovieDetail) -> Void) {
-        NetworkManager.shared.getMovieOnTapped(imdbID: moviesList[indexpath.row].id) { movie in
-            guard let movie = movie else { return }
-            let movieDetailViewModel = movie
-            DispatchQueue.main.async {
-                completion(movieDetailViewModel)
-            }
-        }
-    }
+    private var nextPage : Int = 2
+    private var maxPage : Int = 0
     
     
-    func getMovies (searchText: String, completion: @escaping ([MovieVM]) -> Void ){
+    func changeFavoriteStatus(imdbID: String) {
         
-        NetworkManager.shared.getMoviesByText(searchText: searchText) { movies in
-            guard let movies = movies else { return }
-            let moviesViewModel = movies.map(MovieVM.init)
-            DispatchQueue.main.async {
-                self.moviesList = moviesViewModel
-                completion(moviesViewModel)
-                //print(self.moviesList)
-            }
-        }
     }
+    
     
     var stateClosure: ((Result<ViewInteractivity, Error>) -> ())?
     
@@ -63,6 +58,53 @@ final class MovieListViewModelImpl: MovieListViewModel {
         self.stateClosure?(.success(.updateMovieList))
     }
 }
+
+
+/// Movieleri ve paging için diğer sayfaları alan fonksiyonlar
+extension MovieListViewModelImpl {
+    
+    func getMovies (searchText: String, completion: @escaping (Search) -> Void ){
+        GetMoviesService.shared.getMoviesByText(searchText: searchText) { response in
+            guard let response = response else { return }
+            if response.response == "True" {
+                DispatchQueue.main.async {
+                    //Yeni arama yapıldığında listeyi sıfırlar
+                    self.moviesList.removeAll()
+                    self.moviesList.append(contentsOf: response.movies!)
+                    //Sayfalar 10'ar 10'ar geliyor.
+                    //En fazla sayfa, gelen "totalResults" verisinin 10 a bölünüp
+                    //1 eklenmesiyle bulunur.
+                    self.maxPage = (Int(response.totalResults!)!/10)+1
+                    //print(self.maxPage)
+                    completion(response)
+                    //print(self.moviesList)
+                }
+            } else {
+                print("Girilen kelimeyle film bulunamadi")
+            }
+        }
+    }
+    
+    func getMoreMovies( searchText: String, completion: @escaping (Search) -> Void) {
+        if nextPage <= maxPage {
+            GetMoviesService.shared.getMoviesByText(searchText: searchText, nextPage: nextPage) { response in
+                guard let response = response else { return }
+                DispatchQueue.main.async {
+                    self.moviesList.append(contentsOf: response.movies!)
+                    //print(self.moviesList.count)
+                    completion(response)
+                }
+            }
+            self.isPaginating = false
+            nextPage += 1
+        } else {
+            //print("No other page")
+        }
+        
+    }
+}
+
+
 
 // MARK: ViewModel to ViewController interactivity
 extension MovieListViewModelImpl {
@@ -79,7 +121,17 @@ extension MovieListViewModelImpl {
     }
     
     func getMovieForCell(at indexPath: IndexPath) -> Movie? {
-        let movie = self.moviesList[indexPath.row].movie
+        let movie = self.moviesList[indexPath.row]
         return movie
+    }
+    
+    func getMovieForTappedCell(at indexpath: IndexPath, completion: @escaping (MovieDetail) -> Void) {
+        GetMovieDetailService.shared.getMovieOnTapped(imdbID: moviesList[indexpath.row].id) { movie in
+            guard let movie = movie else { return }
+            let movieDetailViewModel = movie
+            DispatchQueue.main.async {
+                completion(movieDetailViewModel)
+            }
+        }
     }
 }

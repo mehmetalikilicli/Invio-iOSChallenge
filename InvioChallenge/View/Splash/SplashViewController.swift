@@ -34,7 +34,14 @@ class SplashViewController: BaseViewController {
     }
     
     private func setupUI() {
-        welcomeLabel.text = "Hoş geldin"
+        
+        let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
+        if launchedBefore  {
+            welcomeLabel.text = "Merhaba"
+        } else {
+            welcomeLabel.text = "Hoş geldin"
+            UserDefaults.standard.set(true, forKey: "launchedBefore")
+        }
         welcomeLabel.font = UIFont.avenir(.Heavy, size: 36)
         welcomeLabel.textColor = .white
     }

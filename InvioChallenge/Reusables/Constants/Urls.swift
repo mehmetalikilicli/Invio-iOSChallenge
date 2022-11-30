@@ -12,4 +12,5 @@ struct Urls {
     static let searchUrl = "s="
     static let imdbId = "i="
     static let apiKey = "&apikey=47457a5a"
+    static let page = "&page="
 }

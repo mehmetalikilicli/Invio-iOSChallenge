@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class BaseViewController: UIViewController {
     
@@ -35,7 +36,6 @@ class BaseViewController: UIViewController {
             let rightItem = UIBarButtonItem(image: UIImage(named: rightIcon)?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: rightItemAction)
             self.navigationItem.rightBarButtonItem = rightItem
         }
-        
         self.title = title
     }
     
@@ -46,4 +46,6 @@ class BaseViewController: UIViewController {
             self.navigationController?.popViewController(animated: true)
         }
     }
+    
+    
 }

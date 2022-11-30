@@ -9,30 +9,27 @@ import Foundation
 
 protocol MovieDetailViewModel: BaseViewModel {
     /// ViewModel ' den viewController'a event tetikler
-    var stateClosure: ((Result<SplashViewModelImpl.ViewInteractivity, Error>) -> ())? { set get }
+    var stateClosure: ((Result<MovieDetailViewModelImpl.ViewInteractivity, Error>) -> ())? { set get }
     
-    func addFavorites(imdbID : String, completion: @escaping (Movie) -> Void)
+    func addFavorites(imdbID : String)
+    
 }
 
 
 final class MovieDetailViewModelImpl: MovieDetailViewModel {
-    
-    var movie : MovieDetailVM?
-    
-    func addFavorites(imdbID : String, completion: @escaping (Movie) -> Void) {
-        
+    func addFavorites(imdbID : String) {
+   
     }
-    var stateClosure: ((Result<SplashViewModelImpl.ViewInteractivity, Error>) -> ())?
     
+    var stateClosure: ((Result<ViewInteractivity, Error>) -> ())?
     
     func start() {
-        
+        self.stateClosure?(.success(.updateMovieDetail))
     }
-    
 }
 
 extension MovieDetailViewModelImpl {
     enum ViewInteractivity {
-        case appStart
+        case updateMovieDetail
     }
 }

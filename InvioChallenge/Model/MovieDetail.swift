@@ -12,6 +12,7 @@ struct MovieDetailResponse : Codable {
 }
 
 struct MovieDetail : Codable {
+    var title :String
     var min : String
     var year : String
     var language : String
@@ -21,9 +22,13 @@ struct MovieDetail : Codable {
     var writer : String
     var actors : String
     var country : String
+    var poster : String
+    var id : String
     var boxOffice : String
     
+    
     enum CodingKeys: String, CodingKey {
+        case title = "Title"
         case min = "Runtime"
         case year = "Year"
         case language = "Language"
@@ -33,6 +38,19 @@ struct MovieDetail : Codable {
         case writer = "Writer"
         case actors = "Actors"
         case country = "Country"
+        case poster = "Poster"
+        case id = "imdbID"
         case boxOffice = "BoxOffice"
     }
 }
+
+struct Rating : Codable, Equatable {
+    var source : String?
+    var value : String?
+    
+    enum CodingKeys : String, CodingKey {
+        case source = "Source"
+        case value = "Value"
+    }
+}
+
