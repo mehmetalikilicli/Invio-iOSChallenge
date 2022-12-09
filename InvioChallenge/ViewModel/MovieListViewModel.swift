@@ -69,9 +69,7 @@ extension MovieListViewModelImpl {
                     //En fazla sayfa, gelen "totalResults" verisinin 10 a bölünüp
                     //1 eklenmesiyle bulunur.
                     self.maxPage = (Int(response.totalResults!)!/10)+1
-                    //print(self.maxPage)
                     completion(response)
-                    //print(self.moviesList)
                 }
             } else {
                 print("Girilen kelimeyle film bulunamadi")
@@ -92,7 +90,7 @@ extension MovieListViewModelImpl {
             self.isPaginating = false
             nextPage += 1
         } else {
-            //print("No other page")
+            print("No other page")
         }
         
     }

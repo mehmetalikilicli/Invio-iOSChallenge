@@ -67,15 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
-    }
-    
-    
-    
-
-    
-    
-    
-    
+    } 
 }
 
 extension AppDelegate: SplashViewControllerDelegate {

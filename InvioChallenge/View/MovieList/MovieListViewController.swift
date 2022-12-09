@@ -82,8 +82,6 @@ extension MovieListViewController: UITableViewDelegate, UITableViewDataSource {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: MovieListTableViewCell.className, for: indexPath) as! MovieListTableViewCell
         cell.setupCell(movie: movie)
-        //print(cell.movieNameLabel.text)
-        //print(movie)
         return cell
     }
     
@@ -94,6 +92,7 @@ extension MovieListViewController: UITableViewDelegate, UITableViewDataSource {
                 let movieDetailVC = MovieDetailViewController()
                 //movieDetailVC.configure(with: movie)
                 movieDetailVC.movieDetail = movieDetail
+                movieDetailVC.inject(viewModel: MovieDetailViewModelImpl())
                 //self.navigationController?.pushViewController(movieDetailVC, animated: true )
                 let navVC = UINavigationController(rootViewController: movieDetailVC)
                 navVC.modalPresentationStyle = .fullScreen
@@ -127,6 +126,7 @@ extension MovieListViewController {
 
 // Scroll listener for paging
 extension MovieListViewController : UIScrollViewDelegate {
+    
         
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let position = scrollView.contentOffset.y
@@ -134,6 +134,7 @@ extension MovieListViewController : UIScrollViewDelegate {
         if position > (tableView.contentSize.height-100-scrollView.frame.size.height) {
             if searchField.text != nil && isPaging{
                 viewModel.getMoreMovies(searchText: searchField.text!) { _ in
+                    //self.tableView.footerView = LoadingAnimation.loadingAnimation(xCoordinate: 0, yCoordinate: 0, width: view.frame.size.width, height: 100)
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                     }
@@ -141,4 +142,5 @@ extension MovieListViewController : UIScrollViewDelegate {
             }
         }
     }
+    
 }

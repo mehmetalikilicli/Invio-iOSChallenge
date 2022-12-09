@@ -26,10 +26,6 @@ class MovieListTableViewCell: UITableViewCell {
         super.awakeFromNib()
         posterImageView.cornerRadius = 12
     }
-    
-    
-    
-    
 }
 
 // likButton tıklandığında favorilere ekler ve çıkarır
@@ -72,7 +68,6 @@ extension MovieListTableViewCell {
             if !isfavoriteChanged {
                 let favorite = NSEntityDescription.insertNewObject(forEntityName: "Favorites", into: context)
                 favorite.setValue(movie?.id, forKey: "imdbID")
-                //print(movie!.id)
                 do {
                     try context.save()
                     print("Kaydedildi")
@@ -87,7 +82,7 @@ extension MovieListTableViewCell {
             print("error")
         }
     }
-}
+} 
 
 
 //setupCell
@@ -104,6 +99,7 @@ extension MovieListTableViewCell {
     
     func setMovieImage(movie: Movie) {
         if let url = URL(string: movie.poster!), movie.poster != "N/A"{
+            
             DispatchQueue.main.async {
                 self.posterImageView.kf.setImage(with: url)
             }
@@ -135,7 +131,6 @@ extension MovieListTableViewCell{
             
             for result in results as! [NSManagedObject] {
                 if let favoriteImdbID = result.value(forKey: "imdbID") as? String {
-                    //print(favoriteImdbID)
                     if favoriteImdbID == movie.id {
                         DispatchQueue.main.async {
                             self.likeButton.setImage(UIImage(named: "like-fill"), for: .normal)

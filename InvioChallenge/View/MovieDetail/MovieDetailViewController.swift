@@ -55,6 +55,7 @@ class MovieDetailViewController: BaseViewController {
         configure(with: movieDetail!)
         setUpUI()
         setupNavBar(title: movieDetail?.title, leftIcon: "left-arrow", rightIcon: "like-empty",leftItemAction: #selector(goBack))
+        viewModel.start()
     }
     
     func inject(viewModel: MovieDetailViewModel) {
@@ -80,9 +81,7 @@ class MovieDetailViewController: BaseViewController {
             
             for result in results as! [NSManagedObject] {
                 if let favoriteImdbID = result.value(forKey: "imdbID") as? String {
-                    //print(favoriteImdbID)
                     if favoriteImdbID == movieDetail?.id {
-                        print("silindi")
                         context.delete(result)
                         isfavoriteChanged = true
                         DispatchQueue.main.async {
@@ -101,12 +100,10 @@ class MovieDetailViewController: BaseViewController {
             if !isfavoriteChanged {
                 let favorite = NSEntityDescription.insertNewObject(forEntityName: "Favorites", into: context)
                 favorite.setValue(movieDetail?.id, forKey: "imdbID")
-                //print(movieDetail?.id)
                 do {
                     try context.save()
-                    print("Kaydedildi")
                 } catch {
-                    print("Kaydedilemedi")
+                    print("error")
                 }
                 DispatchQueue.main.async {
                     //Rightbutton.image = UIimage(named: "like-fill")

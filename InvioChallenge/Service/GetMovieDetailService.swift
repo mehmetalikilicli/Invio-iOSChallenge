@@ -22,6 +22,7 @@ class GetMovieDetailService {
         guard let url = URL(string: urlString) else { return }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
+            
             guard error == nil, let data = data else {
                 completion(nil)
                 return
@@ -29,7 +30,6 @@ class GetMovieDetailService {
             let answer = try? JSONDecoder().decode(MovieDetail.self, from: data)
             
             answer == nil ? completion(nil) : completion(answer)
-            //print(answer)
         }.resume()
     }
     

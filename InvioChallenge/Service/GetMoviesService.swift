@@ -28,7 +28,6 @@ class GetMoviesService {
                 return
             }
             let answer = try? JSONDecoder().decode(Search.self, from: data)
-            //print(moviesEnvelope?.movies!)
             answer == nil ? completion(nil) : completion(answer)
         }.resume()
     }
