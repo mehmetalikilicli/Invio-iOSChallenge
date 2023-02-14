@@ -16,7 +16,7 @@ final class SplashViewModelImpl: SplashViewModel {
     var stateClosure: ((Result<ViewInteractivity, Error>) -> ())?
     
     func start() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
             self?.stateClosure?(.success(.appStart))
         }
     }
